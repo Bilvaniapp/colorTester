@@ -115,6 +115,9 @@ const getDataMachine = async (req, res) => {
         })) || [],
         mixColor: storeOrder.mixedColorHex || "#000000",
         phoneNumber: storeOrder.userPhone || "8264906866",
+        userName: storeOrder.userName, 
+      
+        colorNumber:storeOrder.colorNumber
       })),
     };
 
