@@ -83,20 +83,18 @@ const getsaveColor = async (req, res) => {
 
 module.exports = getsaveColor;
 
+
 const getDataMachine = async (req, res) => {
   try {
-    const allSavedColors = await Color.find();
-
-    if (allSavedColors.length === 0) {
-      return res.status(404).json({ message: "No saved colors found" });
-    }
-
     const savedColors = await Color.find({ fetched: false }).limit(1);
 
     if (savedColors.length === 0) {
-      return res
-        .status(200)
-        .json({ message: "All data fetched, wait for new data entry" });
+      return res.status(200).json({
+        success: true,
+        message: "All data fetched, wait for new data entry",
+        type: "Product",
+        colorData: {},
+      });
     }
 
     const colorIds = savedColors.map((color) => color._id);
@@ -106,23 +104,32 @@ const getDataMachine = async (req, res) => {
       { $set: { fetched: true } }
     );
 
-    const colorData = savedColors.map((color) => ({
-      selectedColors: color.colors.map((selectedColor) => ({
-        hex: selectedColor.hex,
-        shade: selectedColor.shade,
-        intensity: selectedColor.intensity,
+    const colorData = {
+      products: savedColors.map((storeOrder) => ({
+        id: storeOrder._id.toString(),
+        shade: storeOrder.colors?.map((selectedColor) => ({
+          hex: selectedColor.hex || "#000000",
+          shade: selectedColor.shade || "K",
+          intensity: selectedColor.intensity || "100",
+          _id: selectedColor._id.toString(),
+        })) || [],
+        mixColor: storeOrder.mixedColorHex || "#000000",
+        phoneNumber: storeOrder.userPhone || "8264906866",
       })),
-      mixedColorHex: color.mixedColorHex,
-      userName: color.userName, 
-      userPhone: color.userPhone, 
-      colorNumber:color.colorNumber
-    }));
+    };
 
-    res.status(200).json({ message: "Colors fetched successfully", colorData });
+    res.status(200).json({
+      success: true,
+      message: "Color Testing data fetched and updated successfully.",
+      type: "Color Testing",
+      colorData: colorData,
+    });
+
   } catch (error) {
     console.error("Error:", error.stack);
     res.status(500).json({ error: "Failed to fetch saved colors" });
   }
 };
+
 
 module.exports = { saveMixColor, getsaveColor, getDataMachine };
