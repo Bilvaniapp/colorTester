@@ -123,8 +123,8 @@ const getDataMachine = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Color Testing data fetched and updated successfully.",
-      type: "Color Testing",
+      message: "Product data fetched and updated successfully.",
+      type: "Product",
       colorData: colorData,
     });
 
